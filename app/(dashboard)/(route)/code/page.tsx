@@ -4,9 +4,10 @@ import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { MessageSquare, Sparkles } from "lucide-react";
+import { Code, Sparkles } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChatCompletionRequestMessage } from "openai";
+import ReactMarkdown from "react-markdown";
 
 import Heading from "@/components/custom/Heading";
 import Empty from "@/components/custom/Empty";
@@ -20,7 +21,7 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/custom/UserAvatar";
 import BotAvatar from "@/components/custom/BotAvatar";
 
-const ConversationPage = () => {
+const CodePage = () => {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,11 +40,11 @@ const ConversationPage = () => {
         content: values.prompt,
       };
       const newMessages = [...messages, userMessage];
-      console.log(newMessages, "NEW MESSAGES")
-      const res = await axios.post("/api/conversation", {
+      console.log(newMessages, "NEW MESSAGES");
+      const res = await axios.post("/api/code", {
         messages: newMessages,
       });
-      console.log(res,"FROM CONVERSATION PAGE");
+      console.log(res, "FROM CONVERSATION PAGE");
       setMessages((current) => [...current, userMessage, res.data]);
       form.reset();
     } catch (error) {
@@ -57,11 +58,11 @@ const ConversationPage = () => {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="Generate text from a prompt"
-        Icon={MessageSquare}
-        iconColor="text-violet-500"
-        iconBgColor="bg-violet-500/10"
+        title="Code Generation"
+        description="Generate code from a prompt"
+        Icon={Code}
+        iconColor="text-green-700"
+        iconBgColor="bg-green-700/10"
       />
 
       <div className="px-4 lg:px-8">
@@ -94,7 +95,7 @@ const ConversationPage = () => {
                             focus-visible:ring-transparent
                         "
                         disabled={isLoading}
-                        placeholder="How do I calculate the area of a circle?"
+                        placeholder="Write a code to find the Nth fibonacci number"
                         {...field}
                       />
                     </FormControl>
@@ -121,14 +122,28 @@ const ConversationPage = () => {
               <div
                 key={id}
                 className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
+                  "p-4 md:p-8 w-full flex flex-col md:flex-row items-start gap-x-8 rounded-lg",
                   message.role === "user"
                     ? "bg-white border border-black/10"
                     : "bg-muted"
                 )}
               >
                 {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                {message.content}
+                <ReactMarkdown
+                  components={{
+                    pre: ({ node, ...props }) => (
+                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                        <pre {...props} />
+                      </div>
+                    ),
+                    code: ({ node, ...props }) => (
+                      <code className="bg-black/10 rounded-lg p-1" {...props} />
+                    ),
+                  }}
+                  className="text-sm oveflow-hidden leading-7 max-w-full"
+                >
+                  {message.content || ""}
+                </ReactMarkdown>
               </div>
             ))}
           </div>
@@ -138,4 +153,4 @@ const ConversationPage = () => {
   );
 };
 
-export default ConversationPage;
+export default CodePage;

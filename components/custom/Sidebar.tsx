@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -10,6 +9,8 @@ import {
   MessageSquare,
   Settings,
   VideoIcon,
+  Code,
+  Music
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -46,13 +47,13 @@ const routes = [
   },
   {
     label: "Music Generation",
-    Icon: ImageIcon,
+    Icon: Music,
     href: "/music",
     color: "text-emerald-500",
   },
   {
     label: "Code Generation",
-    Icon: VideoIcon,
+    Icon: Code,
     href: "/code",
     color: "text-green-500",
   },

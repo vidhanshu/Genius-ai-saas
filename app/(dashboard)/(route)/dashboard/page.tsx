@@ -18,7 +18,7 @@ const tools = [
     Icon: MessageSquare,
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
-    href: "/",
+    href: "/conversation",
   },
   {
     label: "Music Generation",
