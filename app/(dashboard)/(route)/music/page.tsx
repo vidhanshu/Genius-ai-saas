@@ -14,12 +14,15 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/custom/Loader";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 import { formSchema } from "./constants";
 
 const MusicPage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [music, setMusic] = useState<string>();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,22 +39,23 @@ const MusicPage = () => {
       console.log(res);
       setMusic(res.data.audio);
       form.reset();
-    } catch (error) {
-      // TODO: Open pro model
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
   };
 
   return (
-    <div>
+    <div className="pb-10">
       <Heading
         title="Music generation"
         description="Generate music from a prompt"
         Icon={Music}
-        iconColor="text-emrald-500"
-        iconBgColor="bg-emrald-500/10"
+        iconColor="text-emerald-500"
+        iconBgColor="bg-emerald-500/10"
       />
 
       <div className="px-4 lg:px-8">
@@ -66,7 +70,7 @@ const MusicPage = () => {
                     p-4
                     px-3
                     md:px-6
-                    focus-within:shadow-sm
+                    focus-within:shadow-sm bg-em
                     grid
                     grid-cols-12
                     gap-2

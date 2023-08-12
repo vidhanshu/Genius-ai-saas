@@ -1,54 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  Code,
-  Image,
-  MessageSquare,
-  Music,
-  VideoIcon,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-const tools = [
-  {
-    label: "Conversation",
-    Icon: MessageSquare,
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-    href: "/conversation",
-  },
-  {
-    label: "Music Generation",
-    Icon: Music,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    href: "/music",
-  },
-  {
-    label: "Image Generation",
-    Icon: Image,
-    color: "text-pink-700",
-    bgColor: "bg-pink-700/10",
-    href: "/image",
-  },
-  {
-    label: "Video Generation",
-    Icon: VideoIcon,
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-    href: "/video",
-  },
-  {
-    label: "Code Generation",
-    Icon: Code,
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
-    href: "/code",
-  },
-];
+import { TOOLS } from "@/constants";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -65,7 +21,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
-        {tools.map(({ Icon, bgColor, color, href, label }, i) => (
+        {TOOLS.map(({ Icon, bgColor, color, href, label }, i) => (
           <Card
             onClick={() => router.push(href)}
             key={href}

@@ -22,12 +22,15 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/custom/Heading";
 import Empty from "@/components/custom/Empty";
 import Loader from "@/components/custom/Loader";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 import { amountOptions, resolutionOptions, formSchema } from "./constants";
 
 const ImagePage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,20 +45,23 @@ const ImagePage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setImages([]);
+      
       const res = await axios.post("/api/image", values);
+
       const urls = res.data.map((image: { url: string }) => image.url);
       setImages(urls);
       form.reset();
-    } catch (error) {
-      // TODO: Open pro model
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
   };
 
   return (
-    <div>
+    <div className="pb-10">
       <Heading
         title="Image Generation"
         description="Generate images from a prompt"

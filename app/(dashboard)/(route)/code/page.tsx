@@ -20,10 +20,13 @@ import { formSchema } from "./constants";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/custom/UserAvatar";
 import BotAvatar from "@/components/custom/BotAvatar";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const CodePage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,23 +43,24 @@ const CodePage = () => {
         content: values.prompt,
       };
       const newMessages = [...messages, userMessage];
-      console.log(newMessages, "NEW MESSAGES");
+
       const res = await axios.post("/api/code", {
         messages: newMessages,
       });
-      console.log(res, "FROM CONVERSATION PAGE");
+
       setMessages((current) => [...current, userMessage, res.data]);
       form.reset();
-    } catch (error) {
-      // TODO: Open pro model
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
   };
 
   return (
-    <div>
+    <div className="pb-10">
       <Heading
         title="Code Generation"
         description="Generate code from a prompt"
